@@ -1,0 +1,17 @@
+.button-reset {
+  font-style: normal;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  padding: 0;
+  margin: 0;
+  border: none;
+  box-shadow: none;
+  cursor: pointer;
+  outline: none;
+  background-color: #ffffff;
+  color: #ff6838;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 17px;
+}
