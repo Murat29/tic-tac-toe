@@ -8,17 +8,11 @@ import { popupMessage } from '../../utils/constants';
 
 function App() {
   const [isPlay, setIsPlay] = React.useState(false);
-  const [isManPlaysForCrosses, setIsManPlaysForCrosses] = React.useState('');
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
   const [popupTitle, setPopupTitle] = React.useState('');
   const [field, setField] = React.useState(gameLogic.getField());
 
-  React.useEffect(() => {
-    const checkWinAndDraw = gameLogic.checkWinAndDraw();
-    const newIsPopupOpen = Boolean(checkWinAndDraw);
-    setPopupTitle(popupMessage[checkWinAndDraw]);
-    setIsPopupOpen(newIsPopupOpen);
-  }, [field]);
+  React.useEffect(() => {}, [field]);
 
   function reset() {
     setIsPlay(false);
@@ -28,21 +22,39 @@ function App() {
     setPopupTitle('');
   }
 
+  function checkWinAndDraw(isMove) {
+    let checkWinAndDraw = false;
+    if (isMove) checkWinAndDraw = gameLogic.checkWinAndDraw();
+    const newIsPopupOpen = Boolean(checkWinAndDraw);
+    console.log(checkWinAndDraw);
+    setPopupTitle(popupMessage[checkWinAndDraw]);
+    setIsPopupOpen(newIsPopupOpen);
+    return newIsPopupOpen;
+  }
+
   function playForCrosses() {
-    setIsManPlaysForCrosses(true);
+    gameLogic.setisPlayCrosses(false);
     setIsPlay(true);
   }
 
   function playforZeroes() {
-    setIsManPlaysForCrosses(false);
+    gameLogic.setisPlayCrosses(true);
     setIsPlay(true);
+    gameLogic.makeMove();
+    setField([...field]);
+    checkWinAndDraw(true);
   }
 
   function makeMove(value, idLine, idCell) {
-    const isMove = isPlay && !value;
+    const isManMove = isPlay && !value;
     // ход человека
-    if (isMove) field[idLine][idCell] = isManPlaysForCrosses ? 'x' : 'o';
-    setField(isMove ? [...field] : field);
+    if (isManMove) gameLogic.manMakeMove(idLine, idCell);
+    setField([...gameLogic.getField()]);
+    const isGameOver = checkWinAndDraw(isManMove);
+    const isComputerMove = isManMove && !isGameOver;
+    if (isComputerMove) gameLogic.makeMove();
+    setField([...gameLogic.getField()]);
+    checkWinAndDraw(isManMove);
   }
 
   return (
